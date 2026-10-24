@@ -1,0 +1,163 @@
+{
+  "credentials": "service_account.json",
+  "sources": [
+    {
+      "operator": "阿星",
+      "spreadsheet_id": "1CxzSyAwgfdcZ6hQEE2w6YrODS4rywPVhTP8GQJIyPwc",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "紫菜",
+      "spreadsheet_id": "1sjVlFZrdUlSdAUrIPV4VtBsxuMw_pmyOoHWQ362ShuY",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "胖子",
+      "spreadsheet_id": "1t4-SwNVPPF1m9Mbh4CNoUxvMR_hp42hPDNsd3ctYgno",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "鸭腿",
+      "spreadsheet_id": "1e8owQhKBLlhWivfYK9Ku-YUa7ZUGJAhsJzB7DQw3dYE",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "猴子",
+      "spreadsheet_id": "1MsvAiJRjydID3vme-A_H2MqdhDVshn3pmv0mnTwKU_s",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "阿圣",
+      "spreadsheet_id": "1iEEAaH17d8yr2kulzkRF8XCux5Qx8WO7knSsiqJjXBs",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "十八",
+      "spreadsheet_id": "1OWGUr_4AZL9W3oxv9pQ1ZixU0WWjuszZgxXc7nJNpD4",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "小名",
+      "spreadsheet_id": "1jyEBUnIekdM7vgPXpp_I40zMdHaHJutBihvFgQzSg1M",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "黑豹",
+      "spreadsheet_id": "1Msd70zqApIAlPBn9MKFjOUH5BYRLEEAmuz6fGIgYyHA",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "米勒",
+      "spreadsheet_id": "1PXqqGo3bLyRh5wAhuhrlUZy64gPK6KG9LkBsCV2i_jw",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "小熊",
+      "spreadsheet_id": "1dAIuZ6g8Yqnqi0GU7_QWfdm9YriOXjhRIFVqYNqA2l4",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "熊大",
+      "spreadsheet_id": "1kRW9Giuu9OA_sYgQOJRLb4ReBywbcCv3D47KxHuzV0E",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "小兰",
+      "spreadsheet_id": "1o1-YK1wJxjPc6LOBszGqPnval6sVGG5vMFNZvqUOCJo",
+      "worksheet": "个人消耗表"
+    },
+        {
+      "operator": "A8",
+      "spreadsheet_id": "1wiPN4rniM1AfPiItsYwPW7j4HWq8QLEWwPCe0-rQRgE",
+      "worksheet": "个人消耗表"
+    },
+
+   {
+      "operator": "大卫",
+      "spreadsheet_id": "1dApopBEBHJz1oEHVcGb80v8VJ-GIstqycbW0mJZK2dQ",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "阿财",
+      "spreadsheet_id": "1AnaydVorB2XGSQKqxwFYOQNl4lICtN6Qq0e6NhCckX0",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "LUCY",
+      "spreadsheet_id": "1pH3dd8LsKELDDk4eS84FmMahgyhRXc2e9Xa2oDPl0us",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "大明",
+      "spreadsheet_id": "13InZKtGv_qXjiko5OffaLsAPVHrZK0GAm1kQszIuzx0",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "张云彬",
+      "spreadsheet_id": "15WFGWNpuOg8MXqv0W9Hti6Q4ocPxvu7ng7qIF5VFOQQ",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "Ewan",
+      "spreadsheet_id": "1SejVJLQG8oYL0nHSX0gYKyVee-xAV4e6UVj_IRa4UDo",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "皮特",
+      "spreadsheet_id": "1kJ0GApIBDuqecDSUjoTB73dOzoLro6VCHJ8zt5MH7bw",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "小眼睛",
+      "spreadsheet_id": "1GVZcEx5obahRyGsX-RZjQgRYvDeO1mYIUjhEFxVCCFc",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "BBA代投",
+      "spreadsheet_id": "1caqA9G4IhwMZ635TFCuhzuXFj_Y4S-SKoax_FciBIEE",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "传奇",
+      "spreadsheet_id": "1m0DC_Tdt7u6MRY8PxGMl39g0OB05I_3poBa5lx1TVQg",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "EC代投",
+      "spreadsheet_id": "1pi_LsryeC7DAUETa4dQsQqyTFCLH2G26HaM1cdST7Rg",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "DSP-Nativex代投",
+      "spreadsheet_id": "1NfJ1NX30uiw1Qi--qNoz_jhqolwiNGxPREHaGG6iP0w",
+      "worksheet": "个人消耗表"
+    },
+
+    {
+      "operator": "Kian",
+      "spreadsheet_id": "1RxPnGBonFZTs_BetYO2l9UoxMtrd9ZfqHIe8rRjNQoY",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "COKE",
+      "spreadsheet_id": "1nQHWMh_JolInp5x4Cytdh9S1wmCs7xJkqmT2C3uFmQ0",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "link",
+      "spreadsheet_id": "1duIN8lMbvENaQYlm08bP0MLRXKuIiVM7Yn2eU_tK6h8",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "小米- OPPO-商城小熊",
+      "spreadsheet_id": "1eQD1qaK3jlJTzVh3MhtZoiqcRytAv93LUdsdxvqcgHI",
+      "worksheet": "个人消耗表"
+    },
+
+    {
+      "operator": "Leo",
+      "spreadsheet_id": "1TxUUJUmd3EjzGS2E21QQKJWPIfQDyIh0Dh-1F1jqAZs",
+      "worksheet": "个人消耗表"
+    }
+  ]
+}
