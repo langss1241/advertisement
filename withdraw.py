@@ -4,17 +4,21 @@ import psycopg
 from psycopg.rows import dict_row
 
 
+
+yesterday = (pd.Timestamp.now().normalize() - pd.Timedelta(days=4)).date()   # -4
+start_date = (pd.Timestamp.now().normalize() - pd.Timedelta(days=11)).date()
+
+
 QUERY = """
 WITH params AS (
     SELECT
-        (CURRENT_DATE - 2)::date AS target_date,
-        (CURRENT_DATE - 9)::date AS start_date
+        %s::date AS target_date,
+        %s::date AS start_date
 ),
 base_data AS (
     SELECT
         a."date",
         a.source_operator,
-        a.ad_account_id,
         a.media,
         a.placement_type,
         a.channel,
@@ -41,7 +45,6 @@ base_data AS (
     GROUP BY
         a."date",
         a.source_operator,
-        a.ad_account_id,
         a.media,
         a.placement_type,
         a.channel
@@ -50,13 +53,17 @@ raw_data AS (
     SELECT
         b.*,
         CASE
-            WHEN b.placement_type ILIKE '%ios%'
-              OR b.placement_type ILIKE '%苹果%'
-              OR b.placement_type ILIKE '%iphone%'
+            WHEN b.placement_type ILIKE '%%ios%%'
+              OR b.placement_type ILIKE '%%苹果%%'
+              OR b.placement_type ILIKE '%%iphone%%'
                 THEN 'iOS'
-            WHEN b.placement_type ILIKE '%安卓%'
-              OR b.placement_type ILIKE '%android%'
+            WHEN b.placement_type ILIKE '%%安卓%%'
+              OR b.placement_type ILIKE '%%android%%'
                 THEN '安卓'
+            WHEN b.placement_type ILIKE '%%PWA%%'
+            THEN 'PWA'
+            WHEN b.placement_type ILIKE '%%H5%%'
+                THEN 'H5'
             ELSE COALESCE(b.placement_type, '未知')
         END AS os_type
     FROM base_data b
@@ -64,38 +71,17 @@ raw_data AS (
 mapped_data AS (
     SELECT
         r.*,
-        COALESCE(g.operator_group, '未分组') AS group_name
+        COALESCE(ai.operator_group, '未分组') AS group_name
     FROM raw_data r
-    LEFT JOIN LATERAL (
-        SELECT ai.operator_group
-        FROM public.agent_id ai
-        WHERE ai.source_operator = r.source_operator
-          AND (
-              ai.ad_account_id = r.ad_account_id
-              OR ai.ad_account_id IS NULL
-          )
-          AND (
-              ai.chanel = r.media
-              OR ai.chanel IS NULL
-          )
-        ORDER BY
-            CASE
-                WHEN ai.ad_account_id = r.ad_account_id
-                THEN 0 ELSE 1
-            END,
-            CASE
-                WHEN ai.chanel = r.media
-                THEN 0 ELSE 1
-            END,
-            ai.update_at DESC,
-            ai.id DESC
-        LIMIT 1
-    ) g ON TRUE
+    LEFT JOIN public.agent_id ai        
+        ON ai.source_operator = r.source_operator
+
 ),
 daily AS (
     SELECT
         "date",
         source_operator AS operator_name,
+        channel,
         group_name,
         media,
         os_type,
@@ -114,6 +100,7 @@ daily AS (
     GROUP BY
         "date",
         source_operator,
+        channel,
         group_name,
         media,
         os_type
@@ -140,6 +127,7 @@ previous_7_avg AS (
         '前7日均值'::text AS data_type,
         NULL::date AS "date",
         operator_name,
+        channel,
         group_name,
         media,
         os_type,
@@ -157,6 +145,7 @@ previous_7_avg AS (
     FROM previous_7_days
     GROUP BY
         operator_name,
+        channel,
         group_name,
         media,
         os_type
@@ -173,6 +162,8 @@ metrics AS (
         c.*,
         CASE
             WHEN os_type = '安卓' THEN 25::numeric
+            WHEN os_type = 'PWA' THEN 25::numeric
+            WHEN os_type = 'H5' THEN 25::numeric
             WHEN os_type = 'iOS' THEN 35::numeric
             ELSE NULL::numeric
         END AS cost_threshold,
@@ -192,6 +183,7 @@ SELECT
     data_type AS "数据类型",
     "date" AS "日期",
     operator_name AS "投手",
+    channel AS "渠道",
     group_name AS "组别",
     media AS "媒体",
     os_type AS "系统",
@@ -199,10 +191,10 @@ SELECT
     ROUND(level1_depositors, 2) AS "一级首充人数",
     ROUND(level1_cost, 2) AS "一级首充成本$",
     ROUND(level1_cost / NULLIF(cost_threshold, 0) - 1, 4)
-        AS "成本偏离阈值%",
+        AS "成本偏离阈值%%",
     ROUND(level1_roas, 4) AS "一级ROAS",
     ROUND(level1_arppu, 2) AS "一级ARPPU$",
-    ROUND(total_first_depositors, 2) AS "总首充人数",
+    ROUND(total_first_depositors, 2) AS "首充人数",
     ROUND(recharge_d1, 4) AS "次日复充率",
     ROUND(recharge_d3, 4) AS "3日复充率",
     ROUND(recharge_d7, 4) AS "7日复充率",
@@ -220,9 +212,11 @@ SELECT
 FROM metrics
 ORDER BY
     "投手",
+    "渠道",
     "组别",
     "媒体",
     "系统",
+
     CASE data_type
         WHEN '昨日' THEN 0
         WHEN '前7日均值' THEN 1
@@ -243,11 +237,10 @@ def query_local_database():
         row_factory=dict_row,
     ) as connection:
         with connection.cursor() as cursor:
-            cursor.execute(QUERY)
+            cursor.execute(QUERY, (yesterday, start_date))
             return pd.DataFrame(cursor.fetchall())
+
         
-
-
 if __name__ == '__main__':
     df = query_local_database()
-    df.to_csv('ads_daily_report_21.csv', index=False, encoding='utf-8-sig')
+    df.to_csv(f'ads_daily_report_{yesterday.strftime("%m%d")}.csv', index=False, encoding='utf-8-sig')

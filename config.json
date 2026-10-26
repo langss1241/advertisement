@@ -1,0 +1,43 @@
+{
+  "kpi": {
+    "cpa_usd": {
+      "安卓": 25,
+      "iOS": 35
+    },
+    "roas": {
+      "安卓": 0.3,
+      "iOS": 0.3
+    },
+    "arppu_usd": {
+      "安卓": 8,
+      "iOS": 10
+    },
+    "recharge_d1": {
+      "FB": 0.2,
+      "TK": 0.23
+    }
+  },
+  "classification": {
+    "high_spend_usd": 1000,
+    "cpa_severe_increase": 0.2,
+    "roas_severe_drop": 0.1,
+    "severe_cpa_multiple": 1.2,
+    "severe_roas_floor": 0.2,
+    "severe_arppu_multiple": 0.7,
+    "persistent_days": 3,
+    "small_sample_depositors": 10
+  },
+  "risk_weights": {
+    "financial": 35,
+    "deterioration": 25,
+    "spend": 20,
+    "persistence": 10,
+    "retention_and_sample": 10
+  },
+  "eligible_groups": ["A", "B", "C"],
+  "report": {
+    "output_dir": "reports",
+    "history_db": "reports/grade_history.sqlite3",
+    "high_spend_default_is_uncalibrated": true
+  }
+}
