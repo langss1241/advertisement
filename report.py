@@ -32,7 +32,6 @@ def _display(item: dict) -> dict:
         '实际消耗$': item.get('spend'),
         '成本偏离阈值%': item.get('cost_deviation'),
         '一级首充人数': item.get('level1_depositors'),
-        '首充人数': item.get('first_depositors'),
         'CPA$': current.get('cpa'),
         'ROAS': current.get('roas'),
         'ARPPU$': current.get('arppu'),
@@ -42,10 +41,10 @@ def _display(item: dict) -> dict:
         '前7日ARPPU$': baseline.get('arppu'),
         'CPA变化': cpa_change,
         'ROAS变化百分点': attribution.get('roas_change'),
-        '自动建议分级': item.get('auto_grade'),
-        '昨日生效分级': item.get('previous_grade'),
-        '人工最终分级': item.get('manual_grade'),
-        '实际生效分级': item.get('effective_grade'),
+        '分级': item.get('auto_grade'),
+        # '昨日生效分级': item.get('previous_grade'),
+        # '人工最终分级': item.get('manual_grade'),
+        # '实际生效分级': item.get('effective_grade'),
         '异常持续天数': item.get('abnormal_days'),
         '新增异常': '是' if item.get('new_anomaly') else '否',
         '风险变化': item.get('grade_change'),
@@ -56,9 +55,9 @@ def _display(item: dict) -> dict:
         '数据质量提醒': '；'.join(item.get('validation_warnings', [])),
         'CPA主要贡献': attribution.get('cpa_summary'),
         'ROAS初步归因': attribution.get('roas_summary'),
-        '前7日基线来源': item.get('baseline_source'),
+        # '前7日基线来源': item.get('baseline_source'),
         '前7日有效天数': item.get('baseline_days'),
-        '前7日基线完整': item.get('baseline_complete'),
+        # '前7日基线完整': item.get('baseline_complete'),
         '完整结论': item.get('conclusion'),
         '人工最终结论': item.get('manual_conclusion'),
         '处理建议': item.get('recommendation'),
@@ -98,22 +97,23 @@ def _trend_frame(
             '媒体': item.get('media'),
             '系统': item.get('system'),
             '实际消耗$': item.get('spend'),
+            '一级首充人数': item.get('level1_depositors'),
             '成本偏离阈值%': item.get('cost_deviation'),
+            'CPA$': metrics.get('cpa'),
+            'ROAS': metrics.get('roas'),
+            'ARPPU$': metrics.get('arppu'),
             '分级': item.get('manual_grade') or assessment.get('effective_grade'),
             '结论': (
                 item.get('manual_reason')
                 or assessment.get('manual_conclusion')
                 or assessment.get('conclusion')
             ),
-            '一级首充人数': item.get('level1_depositors'),
             '首充人数': item.get('first_depositors'),
-            '一级首充金额$': item.get('level1_amount'),
             '曝光量': item.get('impressions'),
-            'CPA$': metrics.get('cpa'),
-            'ROAS': metrics.get('roas'),
-            'ARPPU$': metrics.get('arppu'),
             '点击量': item.get('clicks'),
+            'CPC$': metrics.get('cpc'),
             '安装量': item.get('installs'),
+            '安装成本$': metrics.get('install_cpa'),
             '一级注册人数': item.get('registrations'),
             '点击安装率': metrics.get('click_install_rate'),
             '安装注册率': metrics.get('install_registration_rate'),
@@ -144,12 +144,21 @@ def _format_sheet(sheet, header_row: int = 1):
         cell.value: cell.column for cell in sheet[header_row]
         if cell.value is not None
     }
+    accent_fill = 'C65911'
+    data_fill = 'FCE4D6'
+    accent_labels = {'一级首充人数', '成本偏离阈值%', 'CPA$', 'ROAS', 'ARPPU$'}
     for label, color in (
-        ('自动建议分级', '806000'),
+        ('分级', '806000'),
         ('人工最终分级', '1F4E78'),
     ):
         if label in headers:
             sheet.cell(header_row, headers[label]).fill = PatternFill('solid', fgColor=color)
+    for label in accent_labels:
+        if label in headers:
+            column_index = headers[label]
+            sheet.cell(header_row, column_index).fill = PatternFill('solid', fgColor=accent_fill)
+            for row in range(header_row + 1, sheet.max_row + 1):
+                sheet.cell(row, column_index).fill = PatternFill('solid', fgColor=data_fill)
     for label in ('ROAS', '次日复充率', '前7日ROAS', 'CPA变化', 'ROAS变化百分点',
                   '分级置信度', '点击安装率', '安装注册率', '一级注册首充率',
                   '成本偏离阈值%'):
@@ -203,6 +212,21 @@ def write_workbook(
         for item in ordered
     }
     table = pd.DataFrame([_display(item) for item in ordered])
+    preferred_order = [
+        '分级', '日期', '记录键', '组别', '投手', '媒体', '系统',
+        '实际消耗$', '一级首充人数', '成本偏离阈值%', 'CPA$', 'ARPPU$', 'ROAS','前7日CPA$', '前7日ROAS', '前7日ARPPU$', 'CPA变化', 'ROAS变化百分点',
+         'CPA主要贡献', 'ROAS初步归因',
+        '风险分数', '分级置信度', '完整结论', '处理建议',
+        '人工最终结论', '人工修正原因', '实际处理动作', '后续效果'
+    ]
+    for column in [ '分级','异常持续天数',
+                   '新增异常', '风险变化', '分级触发条件', '数据校验问题', 
+                   'CPA主要贡献', 'ROAS初步归因', '前7日有效天数', 
+                   '需要人工复核', '前7日CPA$', '前7日ROAS', '前7日ARPPU$', 'CPA变化', 'ROAS变化百分点',
+                   '次日复充率', '实际消耗$']:
+        if column in table.columns and column not in preferred_order:
+            preferred_order.append(column)
+    table = table[[column for column in preferred_order if column in table.columns]]
     ranked = [item for item in ordered if item.get('effective_grade') not in {'P0', 'P4'}]
     top20 = pd.DataFrame([_display(item) for item in ranked[:20]])
     deep = sorted(
@@ -216,7 +240,7 @@ def write_workbook(
 
     review_columns = [
         '日期', '记录键', '投放线ID', '组别', '投手', '媒体', '系统',
-        '自动建议分级', '昨日生效分级', '人工最终分级', '实际生效分级',
+        '分级', '昨日生效分级', '人工最终分级', '实际生效分级',
         '异常持续天数', '新增异常', '风险变化', '分级触发条件',
         '分级置信度', '风险分数', '完整结论', '处理建议',
         '人工最终结论', '人工修正原因', '实际处理动作', '后续效果',
@@ -259,34 +283,80 @@ def write_workbook(
         _display(item) for item in _sort(forced)[10:]
     ]) if len(forced) > 10 else pd.DataFrame(columns=list(_display(ordered[0])) if ordered else [])
 
+    grades = ('P0', 'P1', 'P2-A', 'P2-B', 'P2-C', 'P3')
+
+    grades_labels = {
+    'P0': 'P0-数据缺失',
+    'P1': 'P1-重点关注',
+    'P2-A': 'P2-A-持续低效',
+    'P2-B': 'P2-B-单项、结构异常',
+    'P2-C': 'P2-C-小样本',
+    'P3': 'P3-正常达标'
+    }
+
     with pd.ExcelWriter(path, engine='openpyxl') as writer:
-        table.to_excel(writer, sheet_name='领导速览', index=False, startrow=4)
-        overview = writer.book['领导速览']
-        grades = ('P0', 'P1', 'P2-A', 'P2-B', 'P2-C', 'P3', 'P4')
-        overview.cell(1, 1, '分级渠道数透视（按实际生效分级）')
-        for column, grade in enumerate(grades, start=1):
-            overview.cell(2, column, f'{grade}渠道数')
-            overview.cell(
-                3, column,
-                sum(item.get('effective_grade') == grade for item in ordered),
-            )
-            overview.cell(2, column).font = Font(bold=True, color='FFFFFF')
-            overview.cell(2, column).fill = PatternFill('solid', fgColor='1F4E78')
-            overview.cell(2, column).alignment = Alignment(horizontal='center')
-            overview.cell(3, column).font = Font(bold=True)
-        top20.to_excel(writer, sheet_name='重点监控TOP20', index=False)
-        deep_frame.to_excel(writer, sheet_name='深度分析TOP10', index=False)
-        for group in ('A', 'B', 'C'):
+        table.to_excel(writer, sheet_name='速览', index=False, startrow=4)
+        overview = writer.book['速览']
+
+        grade_columns = [
+            (f'{grades_labels.get(grade, grade)}',
+                sum(item.get('effective_grade') == grade for item in ordered))
+            for grade in grades
+            ]
+        summary_columns = [
+            ('投手数', len({item.get('operator') for item in ordered if item.get('operator')})),
+            ('渠道数', len({item.get('line_id') for item in ordered if item.get('line_id')})),
+            ('消耗', sum(float(item.get('spend') or 0) for item in ordered)),
+            ('CPA$', sum(float(item.get('spend') or 0) for item in ordered)
+                / sum(float(item.get('level1_depositors') or 0) for item in ordered)
+                if sum(float(item.get('level1_depositors') or 0) for item in ordered) else None
+            ),
+            ('一级首充人数', sum(float(item.get('level1_depositors') or 0) for item in ordered)),
+            ('一级ARPPU值$', (
+                sum(float(item.get('level1_amount') or 0) for item in ordered)
+                / sum(float(item.get('level1_depositors') or 0) for item in ordered)
+                if sum(float(item.get('level1_depositors') or 0) for item in ordered) else None
+            )),
+            ('一级ROAS', (
+                sum(float(item.get('level1_amount') or 0) for item in ordered)
+                / sum(float(item.get('spend') or 0) for item in ordered)
+                if sum(float(item.get('spend') or 0) for item in ordered) else None
+            )),
+        ]
+        combined_columns = summary_columns + grade_columns
+        accent_fill = 'C65911'
+        data_fill = 'FCE4D6'
+        highlight_names = {'消耗', 'CPA$', '一级首充人数', '一级ARPPU值$', '一级ROAS'}
+        for column, (name, value) in enumerate(combined_columns, start=1):
+            overview.cell(2, column, name)
+            overview.cell(3, column, value)
+            if name in highlight_names:
+                overview.cell(2, column).font = Font(bold=True, color='FFFFFF')
+                overview.cell(2, column).fill = PatternFill('solid', fgColor=accent_fill)
+                overview.cell(2, column).alignment = Alignment(horizontal='center')
+                overview.cell(3, column).font = Font(bold=True)
+                overview.cell(3, column).fill = PatternFill('solid', fgColor=data_fill)
+            else:
+                overview.cell(2, column).font = Font(bold=True, color='FFFFFF')
+                overview.cell(2, column).fill = PatternFill('solid', fgColor='1F4E78')
+                overview.cell(2, column).alignment = Alignment(horizontal='center')
+                overview.cell(3, column).font = Font(bold=True)
+            if name in {'消耗', 'CPA$', '一级ARPPU值$'}:
+                overview.cell(3, column).number_format = '$#,##0.00;[Red]-$#,##0.00'
+            elif name == '一级ROAS':
+                overview.cell(3, column).number_format = '0.0%'
+        deep_frame.to_excel(writer, sheet_name='重点监控top10', index=False)
+        for group in ('A', 'B', 'C', 'D'):
             _trend_frame(records, group, assessments_by_line_date).to_excel(
                 writer, sheet_name=f'{group}组', index=False
             )
         rules_frame.to_excel(writer, sheet_name='分级规则', index=False)
-        review.to_excel(writer, sheet_name='人工复核记录', index=False)
-        p0.to_excel(writer, sheet_name='P0数据核验', index=False)
-        pd.DataFrame(capacity_rows).to_excel(writer, sheet_name='处理容量提示', index=False)
-        overflow.to_excel(writer, sheet_name='超容量告警', index=False)
+        # review.to_excel(writer, sheet_name='人工复核记录', index=False)
+        # p0.to_excel(writer, sheet_name='P0数据核验', index=False)
+        # pd.DataFrame(capacity_rows).to_excel(writer, sheet_name='处理容量提示', index=False)
+        # overflow.to_excel(writer, sheet_name='超容量告警', index=False)
         for sheet in writer.book.worksheets:
-            _format_sheet(sheet, header_row=5 if sheet.title == '领导速览' else 1)
+            _format_sheet(sheet, header_row=5 if sheet.title == '速览' else 1)
 
 
 def write_backtest_diff(path: str | Path, assessments: list[dict]) -> dict:
@@ -306,7 +376,7 @@ def write_backtest_diff(path: str | Path, assessments: list[dict]) -> dict:
             '投手': item.get('operator'),
             '媒体': item.get('media'),
             '系统': item.get('system'),
-            '自动建议分级': item.get('auto_grade'),
+            '分级': item.get('auto_grade'),
             '人工最终分级': manual or '未提供人工标签',
             '差异状态': (
                 '一致' if manual == item['auto_grade'] else

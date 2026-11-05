@@ -5,8 +5,8 @@ from psycopg.rows import dict_row
 
 
 
-yesterday = (pd.Timestamp.now().normalize() - pd.Timedelta(days=4)).date()   # -4
-start_date = (pd.Timestamp.now().normalize() - pd.Timedelta(days=11)).date()
+yesterday = (pd.Timestamp.now().normalize() - pd.Timedelta(days=2)).date()   # -4
+start_date = (pd.Timestamp.now().normalize() - pd.Timedelta(days=9)).date()
 
 
 QUERY = """
@@ -161,11 +161,22 @@ metrics AS (
     SELECT
         c.*,
         CASE
-            WHEN os_type = '安卓' THEN 25::numeric
-            WHEN os_type = 'PWA' THEN 25::numeric
-            WHEN os_type = 'H5' THEN 25::numeric
-            WHEN os_type = 'iOS' THEN 35::numeric
-            ELSE NULL::numeric
+            WHEN spend >= 1000 and media ILIKE '%%TK%%' THEN
+                CASE
+                    WHEN   os_type = '安卓' THEN 35::numeric
+                    WHEN  os_type = 'PWA' THEN 35::numeric
+                    WHEN  os_type = 'H5' THEN 35::numeric
+                    WHEN  os_type = 'iOS' THEN 45::numeric
+                    ELSE NULL::numeric
+                END
+            ELSE
+                CASE
+                    WHEN os_type = '安卓' THEN 25::numeric
+                    WHEN os_type = 'PWA' THEN 25::numeric
+                    WHEN os_type = 'H5' THEN 25::numeric
+                    WHEN os_type = 'iOS' THEN 35::numeric
+                    ELSE NULL::numeric
+                END
         END AS cost_threshold,
         spend / NULLIF(impressions, 0) * 1000 AS calc_cpm,
         clicks / NULLIF(impressions, 0) AS calc_ctr,
@@ -228,7 +239,7 @@ ORDER BY
 
 def query_local_database():
     """执行报表 SQL，返回 pandas.DataFrame。"""
-    with psycopg.connect(
+    with psycopg.connect( 
         host='localhost',
         port=5432,
         dbname='postgres',
@@ -240,7 +251,11 @@ def query_local_database():
             cursor.execute(QUERY, (yesterday, start_date))
             return pd.DataFrame(cursor.fetchall())
 
-        
-if __name__ == '__main__':
+
+def main():
     df = query_local_database()
     df.to_csv(f'ads_daily_report_{yesterday.strftime("%m%d")}.csv', index=False, encoding='utf-8-sig')
+    print(f'Generated report for {yesterday.strftime("%m%d")}')
+        
+if __name__ == '__main__':
+    main()

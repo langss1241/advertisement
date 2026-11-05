@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+import  cawl_google
+import withdraw
 from datetime import date
 import json
 from pathlib import Path
@@ -15,6 +17,7 @@ from data_loader import load_frame, load_report, normalize_frame
 from history import GradeHistory, assessment_key
 from metrics import build_assessments, derive_metrics
 from report import write_backtest_diff, write_workbook
+
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -75,6 +78,10 @@ def run(
     import_review: str | None = None,
     benchmark_labels: str | None = None,
 ) -> dict:
+
+
+    cawl_google.main()
+    withdraw.main()
     config = _load_config()
     report_dir = Path(output_dir) if output_dir else BASE_DIR / config['report']['output_dir']
     db_path = Path(history_path) if history_path else BASE_DIR / config['report']['history_db']

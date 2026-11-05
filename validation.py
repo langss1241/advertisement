@@ -40,7 +40,6 @@ def validate_record(record: dict, is_duplicate: bool = False) -> tuple[list[str]
     zero_denominators = (
         ('impressions', 'clicks', '曝光量为0但点击量大于0'),
         ('clicks', 'installs', '点击量为0但安装量大于0'),
-        ('installs', 'registrations', '安装量为0但一级注册人数大于0'),
         ('registrations', 'level1_depositors', '一级注册人数为0但一级首充人数大于0'),
         ('spend', 'level1_depositors', '消耗为0但一级首充人数大于0'),
         ('spend', 'level1_amount', '消耗为0但一级首充金额大于0'),
@@ -48,12 +47,6 @@ def validate_record(record: dict, is_duplicate: bool = False) -> tuple[list[str]
     for denominator, numerator, message in zero_denominators:
         if record.get(denominator) == 0 and (record.get(numerator) or 0) > 0:
             severe.append(message)
-
-    if (record.get('installs') or 0) > 0 and record.get('registrations') is not None:
-        if record['registrations'] / record['installs'] > 1:
-            warnings.append('安装注册率超过100%，需核验归因口径或时间窗口')
-    if record.get('recharge_d1') is None:
-        warnings.append('次日复充率缺失，不据此判断留存异常')
 
     ratios = (
         ('reported_cpa', 'spend', 'level1_depositors', '一级首充成本$'),

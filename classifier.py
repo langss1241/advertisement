@@ -3,6 +3,17 @@ from __future__ import annotations
 
 GRADES = ('P0', 'P1', 'P2-A', 'P2-B', 'P2-C', 'P3', 'P4')
 
+def _effective_cpa_limit(system: str, media: str, spend, base_limits: dict) -> float | None:
+    if spend is None or spend < 1000:
+        return base_limits.get(system)
+    media_name = (media or '').upper()
+    if 'TK' in media_name:
+        if system == 'iOS':
+            return 45
+        if system in {'安卓', 'PWA', 'H5'}:
+            return 35
+    return base_limits.get(system)
+
 
 def _change(current, baseline):
     if current is None or baseline is None or baseline == 0:
@@ -33,7 +44,12 @@ def classify(assessment: dict, config: dict) -> dict:
         grade = 'P4'
         triggers.append('昨日无消耗')
     else:
-        cpa_limit = kpi.get('cpa_usd', {}).get(system)
+        cpa_limit = _effective_cpa_limit(
+            system,
+            media,
+            spend,
+            kpi.get('cpa_usd', {}),
+        )
         roas_floor = kpi.get('roas', {}).get(system)
         arppu_floor = kpi.get('arppu_usd', {}).get(system)
         retention_floor = kpi.get('recharge_d1', {}).get(media)

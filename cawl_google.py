@@ -224,5 +224,6 @@ def main():
     logging.info('DONE: %d rows; PostgreSQL table=public.ads_daily_raw; csv=%s',len(all_records),CSV)
 
 
+
 if __name__ == '__main__':
     main()

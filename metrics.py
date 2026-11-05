@@ -10,8 +10,9 @@ SUM_FIELDS = (
     'spend', 'level1_depositors', 'first_depositors', 'level1_amount',
     'impressions', 'clicks', 'installs', 'registrations',
 )
+
 RATIO_FIELDS = (
-    'cpa', 'roas', 'arppu', 'cpc', 'click_install_rate',
+    'cpa', 'roas', 'arppu', 'cpc', 'click_install_rate', 'install_cpa',
     'install_registration_rate', 'registration_deposit_rate',
 )
 
@@ -39,6 +40,7 @@ def derive_metrics(values: dict) -> dict:
         'install_registration_rate': (
             registrations / installs if registrations is not None and installs else None
         ),
+        'install_cpa': spend / installs if spend is not None and installs else None,
         'registration_deposit_rate': (
             depositors / registrations
             if depositors is not None and registrations else None

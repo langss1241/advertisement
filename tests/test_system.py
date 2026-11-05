@@ -150,7 +150,7 @@ class SystemTests(unittest.TestCase):
         issues, _ = validate_record(record)
         self.assertTrue(any('点击量为0' in issue for issue in issues))
 
-    def test_install_registration_over_100_percent_is_warning(self):
+    def test_install_registration_over_100_percent_is_not_p0_rule(self):
         record = {
             'operator': 'x', 'group': 'A', 'media': 'FB', 'system': 'iOS',
             'data_type': 'yesterday', 'date': date(2026, 10, 22),
@@ -159,7 +159,7 @@ class SystemTests(unittest.TestCase):
         }
         issues, warnings = validate_record(record)
         self.assertFalse(issues)
-        self.assertTrue(any('超过100%' in warning for warning in warnings))
+        self.assertFalse(any('超过100%' in warning for warning in warnings))
 
     def test_no_spend_is_p4(self):
         rows = make_report(current={
@@ -189,7 +189,7 @@ class SystemTests(unittest.TestCase):
         })
         item = grade(rows)
         self.assertNotIn('次日复充率低于配置阈值', item['grade_triggers'])
-        self.assertTrue(any('次日复充率缺失' in trigger for trigger in item['grade_triggers']))
+        self.assertFalse(any('次日复充率缺失' in trigger for trigger in item['grade_triggers']))
 
     def test_low_retention_is_structural_when_financials_are_good(self):
         rows = make_report(current={
@@ -305,10 +305,13 @@ class SystemTests(unittest.TestCase):
             workbook = load_workbook(output, data_only=True)
 
         overview = workbook['领导速览']
+        summary_headers = {cell.value: cell.column for cell in overview[2]}
+        self.assertEqual(overview.cell(3, summary_headers['投手数']).value, 1)
+        self.assertEqual(overview.cell(3, summary_headers['渠道数']).value, 2)
+        self.assertEqual(overview.cell(3, summary_headers['P0渠道数']).value, 0)
+        self.assertEqual(overview.cell(3, summary_headers['P1渠道数']).value, 1)
+        self.assertEqual(overview.cell(3, summary_headers['P3渠道数']).value, 1)
         headers = {cell.value: cell.column for cell in overview[5]}
-        self.assertEqual(overview.cell(3, 1).value, 0)
-        self.assertEqual(overview.cell(3, 2).value, 1)
-        self.assertEqual(overview.cell(3, 4).value, 0)
         self.assertIn('成本偏离阈值%', headers)
         self.assertEqual(overview.cell(6, headers['成本偏离阈值%']).value, 0.125)
         self.assertEqual(overview.freeze_panes, 'A6')
