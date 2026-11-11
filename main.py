@@ -19,7 +19,6 @@ from metrics import build_assessments, derive_metrics
 from report import write_backtest_diff, write_workbook
 
 
-
 BASE_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = BASE_DIR / 'config.json'
 

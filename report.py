@@ -15,6 +15,14 @@ from history import assessment_key
 GRADE_ORDER = {'P0': 0, 'P1': 1, 'P2-A': 2, 'P2-B': 3, 'P2-C': 4, 'P3': 5, 'P4': 6}
 
 
+def _coalesce(item: dict, *keys, default=None):
+    for key in keys:
+        value = item.get(key)
+        if value is not None and value != '':
+            return value
+    return default
+
+
 def _display(item: dict) -> dict:
     current = item.get('current', {})
     baseline = item.get('baseline', {})
@@ -30,7 +38,7 @@ def _display(item: dict) -> dict:
         '媒体': item.get('media'),
         '系统': item.get('system'),
         '实际消耗$': item.get('spend'),
-        '成本偏离阈值%': item.get('cost_deviation'),
+        '成本偏离阈值%': _coalesce(item, 'cost_deviation', '成本偏离阈值%', '成本偏离阀值%', '超成本阈值', '超成本阀值', default=None),
         '一级首充人数': item.get('level1_depositors'),
         'CPA$': current.get('cpa'),
         'ROAS': current.get('roas'),
@@ -41,7 +49,7 @@ def _display(item: dict) -> dict:
         '前7日ARPPU$': baseline.get('arppu'),
         'CPA变化': cpa_change,
         'ROAS变化百分点': attribution.get('roas_change'),
-        '分级': item.get('auto_grade'),
+        '分级': _coalesce(item, 'effective_grade', 'actual_grade', 'auto_grade', 'manual_grade', default=None),
         # '昨日生效分级': item.get('previous_grade'),
         # '人工最终分级': item.get('manual_grade'),
         # '实际生效分级': item.get('effective_grade'),
@@ -58,11 +66,11 @@ def _display(item: dict) -> dict:
         # '前7日基线来源': item.get('baseline_source'),
         '前7日有效天数': item.get('baseline_days'),
         # '前7日基线完整': item.get('baseline_complete'),
-        '完整结论': item.get('conclusion'),
-        '人工最终结论': item.get('manual_conclusion'),
+        '完整结论': _coalesce(item, 'conclusion', '完整结论', default=None),
+        '人工最终结论': _coalesce(item, 'manual_conclusion', '人工最终结论', default=None),
         '处理建议': item.get('recommendation'),
         '需要人工复核': '是' if item.get('needs_review') else '否',
-        '人工修正原因': item.get('manual_reason'),
+        '人工修正原因': _coalesce(item, 'manual_reason', '人工修正原因', default=None),
         '实际处理动作': item.get('actual_action'),
         '后续效果': item.get('follow_up'),
     }
@@ -88,6 +96,14 @@ def _trend_frame(
             item.get('operator'), item.get('media'), item.get('system'),
         )
         assessment = (assessments_by_line_date or {}).get(assessment_key, {})
+        cost_deviation = _coalesce(
+            item, 'cost_deviation', '成本偏离阈值%', '成本偏离阀值%', '超成本阈值', '超成本阀值', default=None
+        )
+        manual_grade = _coalesce(item, 'manual_grade', '人工最终分级', '分级', default=None)
+        effective_grade = _coalesce(item, 'effective_grade', '实际生效分级', default=None)
+        manual_reason = _coalesce(item, 'manual_reason', '人工修正原因', '结论', default=None)
+        manual_conclusion = _coalesce(item, 'manual_conclusion', '人工最终结论', default=None)
+        conclusion = _coalesce(item, 'conclusion', '完整结论', default=None)
         rows.append({
             '数据类型': item.get('data_type'),
             '日期': item.get('date'),
@@ -98,13 +114,15 @@ def _trend_frame(
             '系统': item.get('system'),
             '实际消耗$': item.get('spend'),
             '一级首充人数': item.get('level1_depositors'),
-            '成本偏离阈值%': item.get('cost_deviation'),
+            '成本偏离阈值%': cost_deviation,
             'CPA$': metrics.get('cpa'),
             'ROAS': metrics.get('roas'),
             'ARPPU$': metrics.get('arppu'),
-            '分级': item.get('manual_grade') or assessment.get('effective_grade'),
+            '分级': manual_grade or effective_grade or assessment.get('effective_grade'),
             '结论': (
-                item.get('manual_reason')
+                manual_reason
+                or manual_conclusion
+                or conclusion
                 or assessment.get('manual_conclusion')
                 or assessment.get('conclusion')
             ),
