@@ -37,10 +37,8 @@ def _load_database_report() -> tuple[list[dict], list[str]]:
         ) from exc
     return normalize_frame(query_local_database())
 
-
 def _parse_date(value: str | None) -> date | None:
     return date.fromisoformat(value) if value else None
-
 
 def _known_case_check(assessments: list[dict]) -> dict:
     candidates = [

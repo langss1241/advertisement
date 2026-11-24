@@ -3,8 +3,6 @@ import pandas as pd
 import psycopg
 from psycopg.rows import dict_row
 
-
-
 yesterday = (pd.Timestamp.now().normalize() - pd.Timedelta(days=2)).date()   # -4
 start_date = (pd.Timestamp.now().normalize() - pd.Timedelta(days=9)).date()
 
@@ -67,6 +65,7 @@ raw_data AS (
             ELSE COALESCE(b.placement_type, '未知')
         END AS os_type
     FROM base_data b
+    --where b.actual_spend_usd > 0
 ),
 mapped_data AS (
     SELECT
@@ -250,7 +249,6 @@ def query_local_database():
         with connection.cursor() as cursor:
             cursor.execute(QUERY, (yesterday, start_date))
             return pd.DataFrame(cursor.fetchall())
-
 
 def main():
     df = query_local_database()

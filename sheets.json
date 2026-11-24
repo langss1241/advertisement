@@ -122,16 +122,7 @@
       "spreadsheet_id": "1m0DC_Tdt7u6MRY8PxGMl39g0OB05I_3poBa5lx1TVQg",
       "worksheet": "个人消耗表"
     },
-    {
-      "operator": "EC代投",
-      "spreadsheet_id": "1pi_LsryeC7DAUETa4dQsQqyTFCLH2G26HaM1cdST7Rg",
-      "worksheet": "个人消耗表"
-    },
-    {
-      "operator": "DSP-Nativex代投",
-      "spreadsheet_id": "1NfJ1NX30uiw1Qi--qNoz_jhqolwiNGxPREHaGG6iP0w",
-      "worksheet": "个人消耗表"
-    },
+    
 
     {
       "operator": "Kian",
@@ -158,6 +149,92 @@
       "operator": "Leo",
       "spreadsheet_id": "1TxUUJUmd3EjzGS2E21QQKJWPIfQDyIh0Dh-1F1jqAZs",
       "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "Kim",
+      "spreadsheet_id": "1p6szq2wCIKsfWc8Pip6YxYJgccZnBaSNuqr3NcJMAjI",
+      "worksheet": "个人消耗表"
+    },
+    
+    {
+      "operator": "亨利",
+      "spreadsheet_id": "1rJ4Cte2KW1gYfxgq9inXEK0kTVsQgaQdCT6e7GptjpM",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "Austin",
+      "spreadsheet_id": "12WjptGTXd5c5RAe3rVkGYdb6-cPpDFJn6E2jbJVYCE4",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "芯润",
+      "spreadsheet_id": "1_HbZOEBB_i8mgLNmQ0IV0hsFXjHMV6OUsHCp054PQFE",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "EC代投",
+      "spreadsheet_id": "1SH_Vf8R1dEdRNDwKTpiGmprgP0_SbhPA3AyY7LC9gmU",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "半夏",
+      "spreadsheet_id": "1O6feWHpnuzK79ZgaCexyjEwhIQm0qdYYPdx9BdAkZO0",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "瑞科",
+      "spreadsheet_id": "1MrNENTA-ECxb4mrV4b7CMk2UCidOtPyL4EDpAQ6si6o",
+      "worksheet": "个人消耗表"
+    },
+
+    {
+      "operator": "外-小米-OPPO-小熊",
+      "spreadsheet_id": "1XJDlua1-v5MSK8MTFylt1IYKuLPoaXJ2lO46eVNMhUU",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "Nativex",
+      "spreadsheet_id": "1NfJ1NX30uiw1Qi--qNoz_jhqolwiNGxPREHaGG6iP0w",
+      "worksheet": "个人消耗表"
+    },
+    {
+      "operator": "星城",
+      "spreadsheet_id": "15pgc4TUe6uZ-YZ6u5wbGFY6bTpiZb_O_kTfhSV1dYTk",
+      "worksheet": "个人消耗表"
+    },
+        {
+      "operator": "加杰智能",
+      "spreadsheet_id": "1oz7abthCxI3eZN53eUi4GMch2_s18gUfCiDdhcKRuFg",
+      "worksheet": "个人消耗表"
+    },
+        {
+      "operator": "木清",
+      "spreadsheet_id": "1zeT7ZlrhDB36VEijhimJZtZlJA8UCwkQQ_HQUDHbQlw",
+      "worksheet": "个人消耗表"
+    },
+        {
+      "operator": "诚赢齐创",
+      "spreadsheet_id": "1DKV9x8RJPQlHuVfSFWpTsvCA_5Y8zemyfgzrIP7e-vg",
+      "worksheet": "个人消耗表"
+    },
+        {
+      "operator": "方舟科技",
+      "spreadsheet_id": "1e9xcyYsgAZLqiKlX8HcMVxR2l_seyeySKt2KEMxnViA",
+      "worksheet": "个人消耗表"
+    },
+        {
+      "operator": "上海传奇",
+      "spreadsheet_id": "1QQK_kTP-X5G0Hf673nmBV_cUZJsiPzyQTIitF7fqupI",
+      "worksheet": "个人消耗表"
+    },
+        {
+      "operator": "propellerads",
+      "spreadsheet_id": "1WkCnzOSr5rViEbyCRaidntzfidlAibMwcIgik-F4fkg",
+      "worksheet": "个人消耗表"
     }
+
+
   ]
 }
+
+

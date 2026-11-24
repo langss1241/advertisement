@@ -77,6 +77,7 @@ def clean_number(value, percent=False):
     if s in ('', '-', '—', '–', 'N/A', '#DIV/0!', '#VALUE!'):
         return None
     s = s.replace(',', '').replace('，', '').replace(' ', '').replace('％','%')
+    s = re.sub(r'^\$', '', s)
     # Only strip a trailing stray letter after a valid percentage (e.g. 8.33%v).
     s = re.sub(r'(?<=%)\s*[A-Za-z]+$', '', s)
     is_pct = s.endswith('%')
@@ -222,8 +223,6 @@ def main():
     # 将相同的完整数据集同步到 PostgreSQL；数据库连接信息通过环境变量提供。
     upload_to_postgres(all_records, columns)
     logging.info('DONE: %d rows; PostgreSQL table=public.ads_daily_raw; csv=%s',len(all_records),CSV)
-
-
 
 if __name__ == '__main__':
     main()
